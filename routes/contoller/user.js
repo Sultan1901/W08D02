@@ -20,34 +20,37 @@ const register = async (req, res) => {
       res.status(400).json(err);
     });
 };
-
 const login = (req, res) => {
   const { email, password } = req.body;
   const SECKEY = process.env.SECKEY;
   userModel
     .findOne({ email })
     .then(async (result) => {
-      const payload = {
-        role: result.role,
-      };
-      const options = {
-        expires: 3600,
-      };
-      const webtoken = await jwt.sign(payload, SECKEY, options);
-      console.log(webtoken);
-      const crackedhashpwd = await bcrypt.compare(password, result.password);
-      if (crackedhashpwd) {
+      if (result) {
         if (email === result.email) {
-          if (password === result.password) {
-            res.status(201).json(result);
+          const payload = {
+            role: result.role,
+          };
+
+          const options = {
+            expiresIn: 60 * 60,
+          };
+
+          const crackedhashpwd = await bcrypt.compare(
+            password,
+            result.password
+          );
+
+          if (crackedhashpwd) {
+            res.status(200).json(result);
           } else {
-            res.status(404).json("worng password or email u");
+            res.status(400).json("invalid email or password");
           }
         } else {
-          res.status(404).json("worng password or email u");
+          res.status(400).json("invalid email or password");
         }
       } else {
-        res.status(404).json("Not found");
+        res.status(400).json("email does not exist");
       }
     })
     .catch((err) => {
@@ -55,4 +58,4 @@ const login = (req, res) => {
     });
 };
 
-module.exports = {register,login}
+module.exports = { register, login };
