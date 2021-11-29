@@ -24,30 +24,34 @@ const register = async (req, res) => {
 const login = (req, res) => {
   const { email, passowrd } = req.body;
   const SECKEY = process.env.SECKEY;
-  userModel.findOne({ email }).then(async (result) => {
-    const payload = {
-      role: result.role,
-    };
-    const options = {
-      expires: 3600,
-    };
-    const token = await jwt.sign(payload, SECKEY, options);
-    const crackedhashpwd = await bcrypt.compare(passowrd,
-         result.password);
-    if (crackedhashpwd) {
-      res.status(200).json(result);
-    } else {
-      res.status(400).json("wrong Email or pwd");
-    } else {
-        res.status(400).json("wrong Email or pwd")
-    }else{
-        res.status(400).json("Email dosn't match out database")
-    }
-  });
-  .catch((err)=>{
-      res.status(400).json(err)
-
-  })
+  userModel
+    .findOne({ email })
+    .then(async (result) => {
+      const payload = {
+        role: result.role,
+      };
+      const options = {
+        expires: 3600,
+      };
+      const token = await jwt.sign(payload, SECKEY, options);
+      const crackedhashpwd = await bcrypt.compare(passowrd, result.password);
+      if (crackedhashpwd) {
+        if (email === result.email) {
+          if (password === result.password) {
+            res.status(201).json(result);
+          } else {
+            res.status(404).json("worng password or email u");
+          }
+        } else {
+          res.status(404).json("worng password or email u");
+        }
+      } else {
+        res.status(404).json("Not found");
+      }
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
 };
 
-module.exports ={ register,login}
+module.exports = {register,login}
