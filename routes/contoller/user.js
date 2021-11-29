@@ -32,15 +32,22 @@ const login = (req, res) => {
       expires: 3600,
     };
     const token = await jwt.sign(payload, SECKEY, options);
-    const crackedhashpwd = await bcrypt.compare(passowrd, result.password);
+    const crackedhashpwd = await bcrypt.compare(passowrd,
+         result.password);
     if (crackedhashpwd) {
       res.status(200).json(result);
     } else {
       res.status(400).json("wrong Email or pwd");
     } else {
-        res.status(400)
+        res.status(400).json("wrong Email or pwd")
+    }else{
+        res.status(400).json("Email dosn't match out database")
     }
   });
+  .catch((err)=>{
+      res.status(400).json(err)
+
+  })
 };
 
-module.exports = register;
+module.exports ={ register,login}
