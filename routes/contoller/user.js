@@ -22,7 +22,7 @@ const register = async (req, res) => {
 };
 
 const login = (req, res) => {
-  const { email, passowrd } = req.body;
+  const { email, password } = req.body;
   const SECKEY = process.env.SECKEY;
   userModel
     .findOne({ email })
@@ -33,8 +33,9 @@ const login = (req, res) => {
       const options = {
         expires: 3600,
       };
-      const token = await jwt.sign(payload, SECKEY, options);
-      const crackedhashpwd = await bcrypt.compare(passowrd, result.password);
+      const webtoken = await jwt.sign(payload, SECKEY, options);
+      console.log(webtoken);
+      const crackedhashpwd = await bcrypt.compare(password, result.password);
       if (crackedhashpwd) {
         if (email === result.email) {
           if (password === result.password) {
