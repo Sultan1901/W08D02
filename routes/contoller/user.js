@@ -33,7 +33,7 @@ const login = (req, res) => {
           };
 
           const options = {
-            expiresIn: 60 * 60,
+            expiresIn: 3600,
           };
 
           const crackedhashpwd = await bcrypt.compare(
@@ -44,13 +44,13 @@ const login = (req, res) => {
           if (crackedhashpwd) {
             res.status(200).json(result);
           } else {
-            res.status(400).json("invalid email or password");
+            res.status(400).json("wrong email || password");
           }
         } else {
-          res.status(400).json("invalid email or password");
+          res.status(400).json("wrong email || password");
         }
       } else {
-        res.status(400).json("email does not exist");
+        res.status(400).json("email does not ===> match our records");
       }
     })
     .catch((err) => {
