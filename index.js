@@ -1,11 +1,15 @@
 const express = require('express')
+const dotenv = require("dotenv");
 const app = express()
+dotenv.config();
+
 const PORT = process.env.PORT
 
-const dotenv = require('dotenv')
+
 app.use(express.json())
 app.use(express())
+
 app.listen(PORT,()=>{
-    console.log('sss');
+    console.log(`server work on ${PORT} `);
 })
 
